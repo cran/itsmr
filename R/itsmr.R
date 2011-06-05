@@ -23,6 +23,8 @@ selftest = function() {
 	.test.forecast.wine()
 	.test.forecast.deaths()
 	.test.forecast.sunspots()
+	.test.arar.deaths()
+	.test.arar.trings()
 }
 
 wine = c(
@@ -86,6 +88,29 @@ airpass = c(
 413,405,355,306,271,306,315,301,356,348,355,422,465,467,404,347,305,336,
 340,318,362,348,363,435,491,505,404,359,310,337,360,342,406,396,420,472,
 548,559,463,407,362,405,417,391,419,461,472,535,622,606,508,461,390,432)
+
+.trings = c(
+1.046,1.038,0.925,0.755,1.156,1.163,0.933,1.127,1.053,1.191,0.963,0.961,
+0.729,0.898,0.925,0.802,0.776,0.865,0.87,0.906,0.818,0.76,0.709,0.642,
+0.797,0.585,0.782,0.587,0.77,0.512,0.702,0.795,1.088,1.074,1.06,1,1.091,
+1.209,1.077,0.481,0.974,1.219,1.213,1.05,1.05,0.92,1.32,1.033,1.309,
+0.979,1.15,0.908,1.113,0.962,1.283,1.094,1.08,0.956,1.104,0.984,1.028,
+1.159,1.223,0.933,1.167,1.114,0.923,1.03,1.126,0.87,0.824,1.277,1.182,
+1.365,1.269,1.23,1.446,1.602,1.328,1.294,1.208,1.203,1.51,1.191,1.069,
+0.927,0.828,0.98,1.187,1.307,1.003,1.128,1.198,1.148,1.19,1.024,1.272,
+1.283,1.225,1.269,1.14,0.963,0.713,0.817,1.401,1.146,0.826,0.812,0.866,
+0.997,1.091,1.157,1.077,0.951,1.061,0.899,0.817,0.922,0.579,0.863,0.697,
+0.814,0.835,0.938,1.201,1.261,0.71,0.6,0.576,0.606,0.579,0.765,0.823,
+0.856,1.041,0.888,0.674,0.73,0.81,0.73,0.804,0.772,0.741,0.955,0.694,
+0.829,0.83,0.89,0.884,0.923,0.865,1.026,1.043,0.537,0.693,0.904,0.902,
+0.779,0.759,0.707,0.804,0.763,0.517,0.704,0.584,0.372,0.607,0.81,0.733,
+0.618,0.65,0.603,0.702,0.9,0.883,0.727,0.812,0.673,0.724,0.958,0.954,
+0.845,0.638,0.987,0.987,1.098,1.287,1.179,1.193,1.246,1.084,1.141,1.245,
+1.174,1.054,0.924,1.118,1.149,1.108,1.305,1.314,1.279,1.106,1.145,0.977,
+1.427,1.13,1.152,1.247,1.344,1.22,1.198,1.253,0.919,1.057,1.231,1.286,
+1.354,1.277,1.553,1.123,1.327,0.525,0.966,0.952,0.778,0.765,1.328,0.753,
+1.243,0.943,1.257,1.122,1.265,1.367,1.247,1.808,2.02,1.383,1.16,1.017,
+0.976,0.771,0.662,0.946,1.148,0.948,1.026,1.248,0.949)
 
 # Compute the autocovariance vector for an ARMA model
 #
@@ -519,110 +544,6 @@ season = function(x,d) {
 	return(s)
 }
 
-# Ljung-Box statistic
-
-.ljungbox = function(y,h=20) {
-	n = length(y)
-	ybar = mean(y)
-	acvf = function(h) sum((y[1:(n-h)]-ybar)*(y[(h+1):n]-ybar))/n
-	gamma = sapply(0:h,acvf)
-	rho = gamma/gamma[1]
-	Q = n*(n+2)*sum(rho[2:(h+1)]^2/(n-1:h))
-	return(Q)
-}
-
-# Test for randomness
-
-.turning_point_test = function(y) {
-	n = length(y)
-	a = y[1:(n-2)] < y[2:(n-1)] & y[2:(n-1)] > y[3:n]
-	b = y[1:(n-2)] > y[2:(n-1)] & y[2:(n-1)] < y[3:n]
-	T = sum(a)+sum(b)
-	mu = 2*(n-2)/3
-	sd = sqrt((16*n-29)/90)
-	Z = (T-mu)/sd
-	pval = 2*(1-pnorm(abs(Z),0,1))
-	.test.out(
-		"Turning points T",
-		T,
-		paste("(T-",round(mu,1),")/",round(sd,1)," ~ N(0,1)",sep=""),
-		pval
-	)
-}
-
-.difference_sign_test = function(y) {
-	n = length(y)
-	S = sum(y[2:n] > y[1:(n-1)])
-	mu = (n-1)/2
-	sd = sqrt((n+1)/12)
-	Z = (S-mu)/sd
-	pval = 2*(1-pnorm(abs(Z),0,1))
-	.test.out(
-		"Diff signs S",
-		S,
-		paste("(S-",round(mu,1),")/",round(sd,1)," ~ N(0,1)",sep=""),
-		pval
-	)
-}
-
-.rank_test = function(y) {
-	n = length(y)
-	f = function(j) sum(y[j:n] > y[j-1])
-	P = sum(sapply(2:n,f))
-	mu = n*(n-1)/4
-	sd = sqrt(n*(n-1)*(2*n+5)/72)
-	Z = (P-mu)/sd
-	pval = 2*(1-pnorm(abs(Z),0,1))
-	.test.out(
-		"Rank P",
-		P,
-		paste("(P-",round(mu,1),")/",round(sd,1)," ~ N(0,1)",sep=""),
-		pval
-	)
-}
-
-.test.out = function(name,stat,dist,pval) {
-	cat(name)
-	cat(format(dist,width=40-nchar(name),justify="right"))
-	cat(format(round(stat,2),width=10))
-	cat(format(round(pval,4),width=10))
-	if (pval < 0.05)
-		cat(" *")
-	cat("\n")
-}
-
-.randomness.tests = function(y,h=20) {
-
-	cat("Null hypothesis: Residuals are iid noise.\n")
-	cat("Test                        Distribution Statistic   p-value\n")
-
-	# Ljung-Box
-
-	Q = .ljungbox(y,h)
-	pval = 1-pchisq(Q,h)
-	.test.out(
-		"Ljung-Box Q",
-		Q,
-		paste("Q ~ chisq(",h,")",sep=""),
-		pval
-	)
-
-	# McLeod-Li
-
-	Q = .ljungbox(y^2,h)
-	pval = 1-pchisq(Q,h)
-	.test.out(
-		"McLeod-Li Q",
-		Q,
-		paste("Q ~ chisq(",h,")",sep=""),
-		pval
-	)
-
-	.turning_point_test(y)
-	.difference_sign_test(y)
-	.rank_test(y)
-}
-
 # Spectral filter
 
 smooth.rank = function(x,k) {
@@ -658,9 +579,11 @@ hr = function(x,d) {
 #
 # Arguments
 #
-#	phi	AR coefficients phi_1, ..., phi_p
+#	a	ARMA model
 #
-#	theta	MA coefficients theta_1, ..., theta_q
+#		phi	AR coefficients phi_1, ..., phi_p
+#
+#		theta	MA coefficients theta_1, ..., theta_q
 #
 #	n	Required order of psi
 #
@@ -670,38 +593,32 @@ hr = function(x,d) {
 #
 #	psi(z) = theta(z)/phi(z) = psi_0 + psi_1 * z + psi_2 * z^2 + ...
 #
-# See p. 85 of ITSF for the algorithm.
-
-.ma.inf.f = function(phi,theta,n) {
-
-	if (n == 0)
-		return(1)
-
-	p = length(phi)
-	q = length(theta)
-
-	psi = c(1,rep(0,n))
-
-	for (k in 1:n) {
-		m = min(k,p)
-		if (k > q)
-			a = 0
-		else
-			a = theta[k]
-		psi[k+1] = a + sum(phi[1:m] * psi[k:(k-m+1)])
-	}
-
-	return(psi)
-}
-
-# As above except use model object
+# From ITSF p. 85:
+#
+#                  p
+# psi  = theta  + sum phi  psi
+#    j        j   k=1    k    j-k
+#
+# Convert sum to row times column vector:
+#
+#                                                   T
+# psi  = theta  + (phi  ... phi )(psi    ... psi   )
+#    j        j       1        p     j-1        j-p
+#
+# For psi index, convert to sequence plus offset p+1:
+#
+# ((j-1):(j-p)) + (p+1) = (j+p):(j+1) = (p:1) + j
 
 ma.inf = function(a,n=50) {
+	if (n == 0)
+		return(1)
+	theta = c(a$theta,numeric(n))
 	phi = a$phi
-	theta = a$theta
-	if (is.null(phi)) phi=0
-	if (is.null(theta)) theta=0
-	return(.ma.inf.f(phi,theta,n))
+	p = length(phi)
+	psi = c(numeric(p),1,numeric(n))
+	for (j in 1:n)
+		psi[j+p+1] = theta[j] + sum(phi * psi[(p:1)+j])
+	return(psi[(0:n)+p+1])
 }
 
 # Check that ma.inf = theta(z) / phi(z)
@@ -725,28 +642,49 @@ ma.inf = function(a,n=50) {
 }
 
 # AR(infinity)
-# phi is the vector phi_1, phi_2, ...
-# theta is the vector theta_1, theta_2, ...
-# n is the order of pi
-# Returns the vector pi_0, ..., pi_n where pi(z) = phi(z) / theta(z)
-
-.ar.inf.f = function(phi,theta,n) {
-	if (n == 0) return(1)
-	q = length(theta)
-	psi = c(rep(0,q-1),1,phi,rep(0,n))
-	theta = rev(theta)
-	for (k in 1:n) psi[k+q] = -psi[k+q] - sum(theta * psi[k:(k+q-1)])
-	return(psi[q:(q+n)])
-}
-
-# As above except use model object
+#
+# Arguments
+#
+#	a	ARMA model
+#
+#		phi	AR coefficients phi_1, ..., phi_p
+#
+#		theta	MA coefficients theta_1, ..., theta_q
+#
+#	n	Required order of pi
+#
+# Return value
+#
+#	Coefficient vector of length n+1 to accommodate pi_0 at index 1, where
+#
+#	pi(z) = phi(z)/theta(z) = pi_0 + pi_1 * z + pi_2 * z^2 + ...
+#
+# From ITSF p. 86:
+#
+#                q
+# pi  = -phi  - sum theta  pi
+#   j       j   k=1      k   j-k
+#
+# Convert sum to row times column vector:
+#
+#                                                   T
+# pi  = -phi  - (theta  ... theta )(pi    ... pi   )
+#   j       j         1          q    j-1       j-q
+#
+# For pi index, convert to sequence plus offset q+1:
+#
+# ((j-1):(j-q)) + (q+1) = (j+q):(j+1) = (q:1) + j
 
 ar.inf = function(a,n=50) {
-	phi = a$phi
+	if (n == 0)
+		return(1)
+	phi = c(a$phi,numeric(n))
 	theta = a$theta
-	if (is.null(phi)) phi=0
-	if (is.null(theta)) theta=0
-	return(.ar.inf.f(phi,theta,n))
+	q = length(theta)
+	pie = c(numeric(q),1,numeric(n))
+	for (j in 1:n)
+		pie[j+q+1] = -phi[j] - sum(theta * pie[(q:1)+j])
+	return(pie[(0:n)+q+1])
 }
 
 # Check that ar.inf = phi(z) / theta(z)
@@ -1026,6 +964,8 @@ ia = function(x,q,m=17) {
 #	p	AR order
 #
 #	q	MA order
+#
+# Returns an ARMA model
 
 hannan = function(x,p,q) {
 
@@ -1118,7 +1058,7 @@ hannan = function(x,p,q) {
 #
 #	$sigma2	White noise variance
 #
-#	$aic	Akaike information criterion
+#	$aicc	Akaike information criterion corrected
 #
 #	$se.phi	Standard errors for phi
 #
@@ -1168,7 +1108,7 @@ arma = function(x,p=0,q=0) {
 #	q	MA order sequence
 
 autofit = function(x,p=0:5,q=0:5) {
-	a = list(aicc=1e12)
+	a = list(aicc=Inf)
 	for (j in p)
 		for (k in q) {
 			b = arma(x,j,k)
@@ -1239,7 +1179,7 @@ forecast = function(x,xv,a,h=10,opt=2) {
 	# Compute standard errors per (3.3.19) of ITSF
 
 	if (!is.null(f$phi)) {
-		psi = .ma.inf.f(f$phi,a$theta,h)
+		psi = ma.inf(list(phi=f$phi,theta=a$theta),h)
 		g = function(j) sum(psi[1:j]^2)
 		se = sqrt(a$sigma2 * sapply(1:h,g))
 		l = f$pred - 1.96*se
@@ -1412,7 +1352,7 @@ forecast = function(x,xv,a,h=10,opt=2) {
 		l = f$l
 		u = f$u
 	} else {
-		psi = .ma.inf.f(f$phi,a$theta,h)
+		psi = ma.inf(list(phi=f$phi,theta=a$theta),h)
 		g = function(j) sum(psi[1:j]^2)
 		se = sqrt(a$sigma2 * sapply(1:h,g))
 		l = f$pred - 1.96*se
@@ -1650,7 +1590,19 @@ Resid = function(x,xv=NULL,a=NULL) {
 #	e	Residuals
 
 test = function(e) {
-	.randomness.tests(e)
+
+	# Randomness tests
+
+	cat("Null hypothesis: Residuals are iid noise.\n")
+	cat("Test                        Distribution Statistic   p-value\n")
+	.ljung_box_test(e)
+	.mcleod_li_test(e)
+	.turning_point_test(e)
+	.difference_sign_test(e)
+	.rank_test(e)
+
+	# Plots
+
 	n = length(e)
 	h = min(40,n-1)
 	op = par(mfrow=c(2,2))
@@ -1671,6 +1623,97 @@ test = function(e) {
 	abline(h=0)
 	qqnorm(e)
 	par(op)
+}
+
+.ljung_box_test = function(y,h=20) {
+	n = length(y)
+	ybar = mean(y)
+	acvf = function(h) sum((y[1:(n-h)]-ybar)*(y[(h+1):n]-ybar))/n
+	gamma = sapply(0:h,acvf)
+	rho = gamma/gamma[1]
+	Q = n*(n+2)*sum(rho[2:(h+1)]^2/(n-(1:h)))
+	pval = 1-pchisq(Q,h)
+	.test.out(
+		"Ljung-Box Q",
+		Q,
+		paste("Q ~ chisq(",h,")",sep=""),
+		pval
+	)
+}
+
+.mcleod_li_test = function(y,h=20) {
+	y = y^2
+	n = length(y)
+	ybar = mean(y)
+	acvf = function(h) sum((y[1:(n-h)]-ybar)*(y[(h+1):n]-ybar))/n
+	gamma = sapply(0:h,acvf)
+	rho = gamma/gamma[1]
+	Q = n*(n+2)*sum(rho[2:(h+1)]^2/(n-(1:h)))
+	pval = 1-pchisq(Q,h)
+	.test.out(
+		"McLeod-Li Q",
+		Q,
+		paste("Q ~ chisq(",h,")",sep=""),
+		pval
+	)
+}
+
+.turning_point_test = function(y) {
+	n = length(y)
+	a = y[1:(n-2)] < y[2:(n-1)] & y[2:(n-1)] > y[3:n]
+	b = y[1:(n-2)] > y[2:(n-1)] & y[2:(n-1)] < y[3:n]
+	T = sum(a)+sum(b)
+	mu = 2*(n-2)/3
+	sd = sqrt((16*n-29)/90)
+	Z = (T-mu)/sd
+	pval = 2*(1-pnorm(abs(Z),0,1))
+	.test.out(
+		"Turning points T",
+		T,
+		paste("(T-",round(mu,1),")/",round(sd,1)," ~ N(0,1)",sep=""),
+		pval
+	)
+}
+
+.difference_sign_test = function(y) {
+	n = length(y)
+	S = sum(y[2:n] > y[1:(n-1)])
+	mu = (n-1)/2
+	sd = sqrt((n+1)/12)
+	Z = (S-mu)/sd
+	pval = 2*(1-pnorm(abs(Z),0,1))
+	.test.out(
+		"Diff signs S",
+		S,
+		paste("(S-",round(mu,1),")/",round(sd,1)," ~ N(0,1)",sep=""),
+		pval
+	)
+}
+
+.rank_test = function(y) {
+	n = length(y)
+	f = function(j) sum(y[j:n] > y[j-1])
+	P = sum(sapply(2:n,f))
+	mu = n*(n-1)/4
+	sd = sqrt(n*(n-1)*(2*n+5)/72)
+	Z = (P-mu)/sd
+	pval = 2*(1-pnorm(abs(Z),0,1))
+	.test.out(
+		"Rank P",
+		P,
+		paste("(P-",round(mu,1),")/",round(sd,1)," ~ N(0,1)",sep=""),
+		pval
+	)
+}
+
+.test.out = function(name,stat,dist,pval) {
+	cat(name)
+	cat(format(dist,width=40-nchar(name),justify="right"))
+	cat(format(round(stat,2),width=10))
+	cat(format(round(pval,4),width=10))
+	if (pval < 0.05)
+		cat(" *")
+	cat("\n")
 }
 
 # Returns the innovations for an ARMA model
@@ -1827,23 +1870,26 @@ test = function(e) {
 
 arar = function(y,h=10,opt=2) {
 
-	shorten = function(a,k) {
-		if (k > 3)
-			return(a)
-		y = a$y
-		psi = a$psi
+	# Save y
+
+	Y = y
+
+	# Memory shortening step
+
+	psi = 1
+
+	f = function(tau) sum(y[(tau+1):n]*y[1:(n-tau)])/sum(y[1:(n-tau)]^2)
+	g = function(tau) sum((y[(tau+1):n]-phi[tau]*y[1:(n-tau)])^2)/sum(y[(tau+1):n]^2)
+
+	for (k in 1:3) {
 		n = length(y)
-		f = function(tau) sum(y[(tau+1):n]*y[1:(n-tau)])/sum(y[1:(n-tau)]^2)
-		g = function(tau) sum((y[(tau+1):n]-phi[tau]*y[1:(n-tau)])^2)/sum(y[(tau+1):n]^2)
 		phi = sapply(1:15,f)
 		err = sapply(1:15,g)
 		tau = which.min(err)
 		if (err[tau] <= 8/n | (phi[tau] >= 0.93 & tau > 2)) {
 			y = y[(tau+1):n] - phi[tau]*y[1:(n-tau)]
 			psi = c(psi,numeric(tau)) - phi[tau]*c(numeric(tau),psi)
-			return(shorten(list(y=y,psi=psi),k+1))
-		}
-		if (phi[tau] >= 0.93) {
+		} else if (phi[tau] >= 0.93) {
 			A = matrix(0,2,2)
 			A[1,1] = sum(y[2:(n-1)]^2)
 			A[1,2] = sum(y[1:(n-2)]*y[2:(n-1)])
@@ -1853,19 +1899,24 @@ arar = function(y,h=10,opt=2) {
 			phi = qr.solve(qr(A),b)
 			y = y[3:n] - phi[1]*y[2:(n-1)] - phi[2]*y[1:(n-2)]
 			psi = c(psi,0,0) - phi[1]*c(0,psi,0) - phi[2]*c(0,0,psi)
-			return(shorten(list(y=y,psi=psi),k+1))
-		}
-		return(a)
+		} else
+			break()
 	}
-	a = shorten(list(y=y,psi=1),1)
-	S = a$y
-	psi = a$psi
+
+	S = y
 	Sbar = mean(S)
 	X = S - Sbar
 	gamma = acvf(X)
+
+	# Restore y
+
+	y = Y
+
+	# Find best lags
+
 	A = matrix(gamma[1],4,4)
 	b = numeric(4)
-	best.sigma2 = 1e10
+	best.sigma2 = Inf
 	m = 26
 	for (i in 2:(m-2)) for (j in (i+1):(m-1)) for (k in (j+1):m) {
 		A[1,2] = A[2,1] = gamma[i]
@@ -1886,9 +1937,6 @@ arar = function(y,h=10,opt=2) {
 			best.lag = c(1,i,j,k)
 		}
 	}
-	cat("Optimal lags",best.lag,"\n")
-	cat("Optimal coeffs",best.phi,"\n")
-	cat("WN Variance",best.sigma2,"\n")
 
 	i = best.lag[2]
 	j = best.lag[3]
@@ -1902,7 +1950,6 @@ arar = function(y,h=10,opt=2) {
 		phi[2]*c(numeric(i),psi,numeric(k-i))-
 		phi[3]*c(numeric(j),psi,numeric(k-j))-
 		phi[4]*c(numeric(k),psi)
-	cat("Filter", xi,"\n")
 
 	# Forecast
 
@@ -1913,6 +1960,7 @@ arar = function(y,h=10,opt=2) {
 	for (i in 1:h)
 		y[n+i] = -sum(xi[2:k]*y[n+i+1-(2:k)]) + c
 	pred = y[n+(1:h)]
+	y = y[1:n]
 
 	# Extend filter coefficients if necessary
 
@@ -1923,33 +1971,98 @@ arar = function(y,h=10,opt=2) {
 
 	tau = numeric(h)
 	tau[1] = 1
-	for (j in 1:(h-1))
-		tau[j+1] = -sum(tau[1:j]*xi[(j:1)+1])
+	if (h > 1)
+		for (j in 1:(h-1))
+			tau[j+1] = -sum(tau[1:j]*xi[(j:1)+1])
 
 	# Standard errors from (9.1.8), except correct typo
 
-	f = function(j) sum(tau[1:j]^2)
-	se = sqrt(sigma2*sapply(1:h,f))
+	F = function(j) sum(tau[1:j]^2)
+	se = sqrt(sigma2*sapply(1:h,F))
 
 	f = list(pred=pred,se=se,l=pred-1.96*se,u=pred+1.96*se)
+
 	if (opt > 0) {
-		if (is.null(f$se))
-			cat(" Step     Prediction    Lower Bound    Upper Bound\n")
-		else
-			cat(" Step     Prediction      sqrt(MSE)    Lower Bound    Upper Bound\n")
+		cat("Optimal lags",best.lag,"\n")
+		cat("Optimal coeffs",best.phi,"\n")
+		cat("WN Variance",best.sigma2,"\n")
+		cat("Filter", xi,"\n\n")
+		cat(" Step     Prediction      sqrt(MSE)    Lower Bound    Upper Bound\n")
 		for (i in 1:h) {
 			cat(format(i,width=5))
 			cat(format(f$pred[i],width=15))
-			if (!is.null(f$se))
-				cat(format(f$se[i],width=15))
+			cat(format(f$se[i],width=15))
 			cat(format(f$l[i],width=15))
 			cat(format(f$u[i],width=15))
 			cat("\n")
 		}
 	}
+
 	if (opt > 1)
 		.plot.forecast(y,f)
+
 	return(invisible(f))
+}
+
+.test.arar.deaths = function() {
+	cat("test arar (deaths) ")
+	f = arar(deaths,opt=0)
+	pred = c(8167.8,7195.8,7982.0,8283.5,9144.1,9464.9,10541.0,9640.8,8902.7,9096.7)
+	se = c(323.35,375.68,392.34,414.78,431.69,441.90,449.82,455.98,460.45,463.77)
+	l = c(7534.1,6459.4,7213.1,7470.6,8298.0,8598.8,9659.7,8747.1,8000.3,8187.7)
+	u = c(8801.6,7932.1,8751.0,9096.5,9990.2,10331.0,11423.0,10535.0,9805.2,10006.0)
+	.test.arar.kernel(f,pred,se,l,u,0.0001)
+	cat("ok\n")
+}
+
+# trings data has medium memory
+
+.test.arar.trings = function() {
+	cat("test arar (trings) ")
+	f = arar(.trings,opt=0)
+	pred = c(0.97008,0.99522,1.04256,0.99059,1.02546,1.02129,1.01924,1.00636,1.01629,1.01310)
+	se = c(0.18340,0.20841,0.22528,0.23397,0.24923,0.25677,0.26742,0.27785,0.28886,0.29755)
+	l = c(0.61061,0.58675,0.60102,0.53203,0.53697,0.51802,0.49511,0.46178,0.45014,0.42992)
+	u = c(1.32954,1.40369,1.48410,1.44916,1.51394,1.52455,1.54337,1.55095,1.58244,1.59628)
+	.test.arar.kernel(f,pred,se,l,u,0.0001)
+	cat("ok\n")
+}
+
+# For arar, ITSM-R sigma2 is different from B&D ITSM so divide by sigma2 to compare.
+
+.test.arar.kernel = function(f,pred,se,l,u,eps) {
+	e = (f$pred - pred) / pred
+	if (any(abs(e) > eps)) {
+		cat("\n")
+		print(f$pred)
+		print(pred)
+		print(e)
+		stop("fail pred\n")
+	}
+	e = (f$l - (f$pred - 1.96*f$se)) / f$l
+	if (any(abs(e) > eps)) {
+		cat("\n")
+		print(f$l)
+		print(e)
+		stop("fail lower bound\n")
+	}
+	e = (f$u - (f$pred + 1.96*f$se)) / f$u
+	if (any(abs(e) > eps)) {
+		cat("\n")
+		print(f$u)
+		print(e)
+		stop("fail upper bound\n")
+	}
+	f$se = f$se/f$se[1]
+	se = se/se[1]
+	e = (f$se - se) / se
+	if (any(abs(e) > eps)) {
+		cat("\n")
+		print(f$se)
+		print(se)
+		print(e)
+		stop("fail se\n")
+	}
 }
 
 .test.forecast.lake = function() {
@@ -1962,7 +2075,7 @@ arar = function(y,h=10,opt=2) {
 	se = c(0.74518,1.05384,1.29069,1.49036,1.66627,1.82531,1.97156,2.10768,2.23554,2.35646)
 	l = c(8.49515,7.88585,7.41731,7.02163,6.67252,6.35648,6.06551,5.79438,5.53946,5.29812)
 	u = c(11.41619,12.01683,12.47671,12.86373,13.20418,13.51156,13.79387,14.05634,14.3026,14.53528)
-	.test.forecast.kernel(f,pred,se,l,u, 0.0001)
+	.test.forecast.kernel(f,pred,se,l,u,0.0001)
 	cat("ok\n")
 }
 
