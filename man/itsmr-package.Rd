@@ -9,7 +9,7 @@ Time series analysis package for students
 }
 
 \description{
- This package is designed to provide a subset of the
+ This package provides a subset of the
  functionality found in the Windows-based program ITSM.
  The intended audience is students using the textbook
  \emph{Introduction to Time Series and Forecasting}
@@ -20,8 +20,8 @@ Time series analysis package for students
 \tabular{ll}{
 Package: \tab itsmr\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2011-06-05\cr
+Version: \tab 1.3\cr
+Date: \tab 2011-09-01\cr
 License: \tab Unlimited\cr
 LazyLoad: \tab yes\cr
 }

@@ -28,7 +28,7 @@ The innovations algorithm is used to estimate white noise variance.
 \value{
 Returns an ARMA model consisting of a list with the following components.
 \item{phi}{0}
-\item{theta}{MA coefficients}
+\item{theta}{Vector of MA coefficients (index number equals coefficient subscript)}
 \item{sigma2}{White noise variance}
 \item{aicc}{Akaike information criterion corrected}
 \item{se.phi}{0}

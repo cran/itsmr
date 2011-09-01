@@ -15,15 +15,15 @@ specify(ar = 0, ma = 0, sigma2 = 1)
 }
 
 \arguments{
-\item{ar}{AR coefficients}
-\item{ma}{MA coefficients}
+\item{ar}{Vector of AR coefficients (index number equals coefficient subscript)}
+\item{ma}{Vector of MA coefficients (index number equals coefficient subscript)}
 \item{sigma2}{White noise variance}
 }
 
 \value{
 Returns an ARMA model consisting of a list with the following components.
-\item{phi}{AR coefficients}
-\item{theta}{MA coefficients}
+\item{phi}{Vector of AR coefficients (index number equals coefficient subscript)}
+\item{theta}{Vector of MA coefficients (index number equals coefficient subscript)}
 \item{sigma2}{White noise variance}
 }
 

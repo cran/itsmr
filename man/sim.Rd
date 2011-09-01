@@ -11,7 +11,7 @@ Generate synthetic observations
 }
 
 \usage{
-sim(a, n)
+sim(a, n = 100)
 }
 
 \arguments{
@@ -20,9 +20,18 @@ sim(a, n)
 }
 
 \details{
-This is a wrapper function, the standard R function \code{arima.sim}
-does the actual simulation.
-}
+The ARMA model is a list with the following components.
+\cr
+\tabular{ll}{
+\code{phi}\tab
+Vector of AR coefficients (index number equals coefficient subscript)
+\cr
+\code{theta}\tab
+Vector of MA coefficients (index number equals coefficient subscript)
+\cr
+\code{sigma2}\tab
+White noise variance
+}}
 
 \value{
 Returns a vector of \code{n} synthetic observations.
