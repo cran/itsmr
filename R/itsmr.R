@@ -25,6 +25,7 @@ selftest = function() {
 	.test.forecast.sunspots()
 	.test.arar.deaths()
 	.test.arar.trings()
+	.test.periodogram()
 }
 
 wine = c(
@@ -2171,4 +2172,148 @@ arar = function(y,h=10,opt=2) {
 		print(e)
 		stop("fail upper bound\n")
 	}
+}
+
+# Compute the periodogram
+#
+# Argument
+#
+#	x	Data
+#
+#	q	Moving average filter order (can be a vector)
+#
+#	opt	Option
+#			= 0 Silent
+#			= 1 Plot periodogram only
+#			= 2 Plot both periodogram and filter
+#
+# Returns a vector of estimated frequency amplitudes
+#
+#	f(lambda)
+#
+# where
+#
+#	lambda = pi * (1:m)/m
+#
+#	m = floor(length(x)/2)
+
+periodogram = function(x,q=0,opt=2) {
+	n = length(x)
+	t = 1:n
+	m = floor(n/2)
+	k = pi*(1:m)/m
+	I = function(lambda) (sum(x*cos(t*lambda))^2+sum(x*sin(t*lambda))^2)/n
+	y = sapply(k,I) / (2*pi)
+	w = 1
+	if (any(q > 0)) {
+		for (j in q)
+			if (j > 0)
+				w = .fcomp(w,j)
+		j = floor(length(w)/2)
+		y = c(rep(y[1],j),y,rep(y[m],j))
+		j = 0:(2*j)
+		f = function(t) sum(y[t+j] * w)
+		y = sapply(1:m,f)
+	}
+	if (opt > 0)
+		if (all(q == 0)) {
+			main = "Periodogram/2pi"
+			plot(k,y,type="o",col="blue",xlab="",ylab="",main=main)
+		} else {
+			cat("Filter ",w,"\n")
+			main = "(Smoothed Periodogram)/2pi"
+			if (opt == 1)
+				plot(k,y,type="o",col="blue",xlab="",ylab="",main=main)
+			else {
+				op = par(mfrow=c(2,1))
+				plot(k,y,type="o",col="blue",xlab="",ylab="",main=main)
+				plot(w,type="h",col="blue",xlab="",ylab="",main="Smoothing Filter")
+				par(op)
+			}
+		}
+	return(invisible(y))
+}
+
+# Moving average filter composition
+#
+#	w	Weights of current filter
+#
+#	q	Order of next MA filter
+#
+# Returns a vector of the new filter weights
+
+.fcomp = function(w,q) {
+	n = length(w)
+	w = c(rep(0,2*q),w,rep(0,2*q))
+	k = 0:(2*q)
+	f = function(t) sum(w[t+k])
+	y = sapply(1:(2*q+n),f) / (2*q+1)
+	return(y)
+}
+
+.test.periodogram = function() {
+	cat("test periodogram ")
+	y = periodogram(Sunspots,opt=0)
+	yy = c(
+		1346.5,1382.8,40.708,174.97,46.414,56.393,959.75,
+		710.34,1514.5,2174.6,189.83,1202.1,127.33,221.34,16.062,
+		36.825,188.78,125.13,49.743,24.446,86.523,69.833,46.737,
+		52.925,1.364,41.845,15.408,4.5947,8.0343,0.76497,10.794,
+		6.2038,8.1066,21.795,0.16017,5.225,7.1887,0.12595,0.25181,
+		1.2706,1.7537,0.87732,1.1386,0.65564,2.407,3.1375,5.7411,
+		2.2302,1.0778,4.8144)
+	e = (y - yy)/yy
+	if (any(abs(e) > 1e-4)) {
+		print(e)
+		stop("fail 1st test")
+	}
+	y = periodogram(Sunspots,1,opt=0)
+	yy = c(
+		1358.571,923.3199,532.8227,87.36368,92.59193,354.1869,
+		575.4954,1061.524,1466.488,1292.985,1188.845,506.4071,
+		516.9095,121.5766,91.4083,80.55662,116.9131,121.2190,
+		66.43994,53.5705,60.26729,67.69768,56.49815,33.67515,
+		32.04469,19.53912,20.61605,9.34567,4.464658,6.5312,5.921034,
+		8.368245,12.03525,10.02073,9.060195,4.191301,4.179895,
+		2.522161,0.5494647,1.092052,1.300555,1.256559,0.8905358,
+		1.400438,2.066728,3.76187,3.702941,3.016359,2.707482,
+		3.568881)
+	e = (y - yy)/yy
+	if (any(abs(e) > 1e-4)) {
+		print(e)
+		stop("fail 2nd test")
+	}
+	y = periodogram(Sunspots,2,opt=0)
+	yy = c(
+		1092.576,858.2777,598.2685,340.255,255.6475,389.5738,
+		657.4761,1083.122,1109.810,1158.271,1041.669,783.0407,
+		351.3243,320.7231,118.0675,117.6279,83.30881,84.9855,
+		94.9252,71.13521,55.45624,56.09268,51.47634,42.54076,
+		31.65577,23.22737,14.24927,14.12948,7.919271,6.078421,
+		6.780792,9.533022,9.412061,8.298189,8.495183,6.899051,
+		2.590333,2.812426,2.118165,0.8558852,1.058425,1.139190,
+		1.366469,1.64323,2.615979,2.834298,2.918724,3.400206,
+		3.73559,3.550264)
+	e = (y - yy)/yy
+	if (any(abs(e) > 1e-4)){
+		print(e)
+		stop("fail 3rd test")
+	}
+	y = periodogram(Sunspots,c(1,2),opt=0)
+	yy = c(
+		1101.527,849.7074,598.9337,398.057,328.4921,434.2325,
+		710.0573,950.136,1117.068,1103.25,994.327,725.3447,485.0294,
+		263.3716,185.4728,106.3347,95.3074,87.73983,83.68197,
+		73.83888,60.89471,54.34175,50.03659,41.89096,32.47463,
+		23.04414,17.20204,12.09934,9.375723,6.926161,7.464078,
+		8.575292,9.08109,8.735144,7.897474,5.994856,4.100603,
+		2.506975,1.928826,1.344158,1.017833,1.188028,1.382963,
+		1.875226,2.364502,2.789667,3.051076,3.351507,3.56202,
+		3.784319)
+	e = (y - yy)/yy
+	if (any(abs(e) > 1e-4)) {
+		print(e)
+		stop("fail 4th test")
+	}
+	cat("ok\n")
 }

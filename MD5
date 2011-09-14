@@ -1,5 +1,5 @@
-1f52b213572d7db6c07fbd8b685c03a6 *DESCRIPTION
-e4671e6f80d4f86160242857fa391079 *R/itsmr.R
+a84617dff59d5fe0db3d92bf11c09f3b *DESCRIPTION
+70d96c440ee0cb322530b1bf56381a54 *R/itsmr.R
 99bc810503da06142326be65d55664b3 *man/Resid.Rd
 550a80060a537015ba152d7fe5d4c47d *man/Sunspots.Rd
 b12df30f1deb5df0f4b2f4d28f48c54a *man/aacvf.Rd
@@ -17,12 +17,13 @@ c37b036efb202b2b4657d524826ea7ad *man/forecast.Rd
 7c032c388d1707b50685dd82ba13e4a4 *man/hannan.Rd
 2756f86a4eff51ace54743d07a7a5264 *man/hr.Rd
 10e6401c15dc977f21e11ef800eeb765 *man/ia.Rd
-ca5499229d1630b7f9c36e3e880f1848 *man/itsmr-package.Rd
+40ba1ca8b47e56346d2c4c11c4e5ad69 *man/itsmr-package.Rd
 d5747e9ee4bfea9897752fbed21507bf *man/lake.Rd
 0464bb6b2810a6c2b73370363a501c6c *man/ma.inf.Rd
+0a87c39056d01b205c6040d797c32276 *man/periodogram.Rd
 66cedaa523042551f7733507ea6e1782 *man/plota.Rd
 9c3f279da5a498b91ee56dcc8ccfca2a *man/plotc.Rd
-0bf7e5761a522ee59f282e7046f60282 *man/plots.Rd
+cccd50e7f763a70f57aaf2996b5b547f *man/plots.Rd
 c3de816ac2f9463ed53bbdf65e11c112 *man/season.Rd
 9fc76f66a0d238b5dc2280fad912a4f7 *man/selftest.Rd
 37f770662db52d5a808397bdae5b735c *man/sim.Rd

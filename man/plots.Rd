@@ -21,6 +21,10 @@ plots(u)
 None
 }
 
+\seealso{
+\code{\link{periodogram}}
+}
+
 \examples{
 a = specify(ar=c(0,0,.99))
 plots(a)
