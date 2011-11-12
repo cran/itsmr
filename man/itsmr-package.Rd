@@ -20,10 +20,11 @@ Time series analysis package for students
 \tabular{ll}{
 Package: \tab itsmr\cr
 Type: \tab Package\cr
-Version: \tab 1.4\cr
-Date: \tab 2011-09-14\cr
+Version: \tab 1.5\cr
+Date: \tab 2011-11-12\cr
 License: \tab Unlimited\cr
 LazyLoad: \tab yes\cr
+Reference Manual: \tab \url{http://itsmr.googlecode.com/files/itsmr.pdf}\cr
 }
 }
 

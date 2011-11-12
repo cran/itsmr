@@ -856,9 +856,13 @@ specify = function(ar=0,ma=0,sigma2=1) {
 #	n	Number of observations required
 
 sim = function(a,n=100) {
-	y = rnorm(1000+n,mean=0,sd=sqrt(a$sigma2))
-	if (any(a$theta != 0))
+	if (all(a$theta == 0))
+		y = rnorm(1000+n,mean=0,sd=sqrt(a$sigma2))
+	else {
+		y = rnorm(1100+n,mean=0,sd=sqrt(a$sigma2))
 		y = filter(y,c(1,a$theta),sides=1)
+		y = y[-(1:100)]
+	}
 	if (any(a$phi != 0))
 		y = filter(y,a$phi,method="recursive")
 	return(y[-(1:1000)]) ## remove first 1000 values
