@@ -1,5 +1,9 @@
-# Default NAMESPACE created by R
-# Remove the previous line if you edit this file
+  importFrom("graphics", "abline", "legend", "lines", "par", "plot",
+             "plot.default")
+  importFrom("stats", "ARMAacf", "acf", "ar.burg", "ar.yw", "arima",
+             "coef", "diffinv", "fft", "filter", "frequency", "is.ts",
+             "pchisq", "pnorm", "qqnorm", "rnorm", "start", "time",
+             "vcov")
 
 # Export all names
 exportPattern(".")

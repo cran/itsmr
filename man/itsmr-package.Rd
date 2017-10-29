@@ -5,26 +5,26 @@
 \docType{package}
 
 \title{
-Time series analysis package for students
+Time Series Analysis Using the Innovations Algorithm
 }
 
 \description{
- This package provides a subset of the
- functionality found in the Windows-based program ITSM.
- The intended audience is students using the textbook
- \emph{Introduction to Time Series and Forecasting}
- by Peter J. Brockwell and Richard A. Davis.
+Provides functions for modeling and forecasting time series data.
+Forecasting is based on the innovations algorithm.
+A description of the innovations algorithm can be found in the textbook
+\emph{Introduction to Time Series and Forecasting}
+by Peter J. Brockwell and Richard A. Davis.
 }
 
 \details{
 \tabular{ll}{
 Package: \tab itsmr\cr
 Type: \tab Package\cr
-Version: \tab 1.5\cr
-Date: \tab 2011-11-12\cr
-License: \tab Unlimited\cr
+Version: \tab 1.6\cr
+Date: \tab 2017-10-28\cr
+License: \tab FreeBSD\cr
 LazyLoad: \tab yes\cr
-Reference Manual: \tab \url{http://itsmr.googlecode.com/files/itsmr.pdf}\cr
+URL: \tab \url{http://eigenmath.xyz/itsmr-refman.pdf}\cr
 }
 }
 
@@ -37,7 +37,6 @@ Maintainer: George Weigt <g808391@gmail.com>
 Brockwell, Peter J., and Richard A. Davis.
 \emph{Introduction to Time Series and Forecasting.}
 2nd ed. Springer, 2002.
-A student version of ITSM is included with the textbook.
 }
 
 \keyword{ package }

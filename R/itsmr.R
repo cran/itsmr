@@ -1,4 +1,4 @@
-# This is ITSM-R.
+# This is ITSM-R version 1.6
 #
 # Notes:
 #
@@ -1086,14 +1086,14 @@ arma = function(x,p=0,q=0) {
 		se.phi = 0
 	} else {
 		phi = c[1:p]
-		se.phi = v[1:p]
+		se.phi = sqrt(v[1:p])
 	}
 	if (q == 0) {
 		theta = 0
 		se.theta = 0
 	} else {
 		theta = c[(p+1):(p+q)]
-		se.theta = v[(p+1):(p+q)]
+		se.theta = sqrt(v[(p+1):(p+q)])
 	}
 	a = list(
 		phi=phi,
@@ -1493,6 +1493,7 @@ forecast = function(x,xv,a,h=10,opt=2) {
 #	$aicc	Akaike information criterion corrected
 
 yw = function(x,p) {
+	n = length(x)
 	x = x - mean(x)
 	a = ar.yw(x,aic=FALSE,order.max=p)
 	a = list(
@@ -1500,7 +1501,7 @@ yw = function(x,p) {
 		theta=0,
 		sigma2=NA,
 		aicc=NA,
-		se.phi=diag(a$asy.var.coef),
+		se.phi=sqrt((n-1-p)/n*diag(a$asy.var.coef)),
 		se.theta=0)
 	a = .innovation.update(x,a)
 	return(a)
