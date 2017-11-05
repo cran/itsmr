@@ -11,7 +11,7 @@ Forecast future values
 }
 
 \usage{
-forecast(x, xv, a, h = 10, opt = 2)
+forecast(x, xv, a, h = 10, opt = 2, alpha = 0.05)
 }
 
 \arguments{
@@ -20,6 +20,7 @@ forecast(x, xv, a, h = 10, opt = 2)
 \item{a}{ARMA model}
 \item{h}{Steps ahead}
 \item{opt}{Display option (0 silent, 1 tabulate, 2 plot and tabulate)}
+\item{alpha}{Level of significance}
 }
 
 \details{

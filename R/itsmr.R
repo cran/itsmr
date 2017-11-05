@@ -1,13 +1,4 @@
-# This is ITSM-R version 1.6
-#
-# Notes:
-#
-# 1. The acronym ITSF appears in many of the comments below. It stands for
-#    "Introduction to Time Series and Forecasting" by Brockwell and Davis.
-#
-# 2. The ITSM-R forecast function is designed to replicate the results of the
-#    Windows program B&D ITSM. These results will differ from the standard R
-#    function predict.arima().
+# This is ITSM-R version 1.7
 
 selftest = function() {
 	.test.smooth.ma()
@@ -1160,6 +1151,8 @@ check = function(a) {
 #
 #	opt	Display option (0 = none, 1 = tabulate, 2 = plot and tabulate)
 #
+#	alpha	level of significance (default 0.05)
+#
 # Return value
 #
 #	$pred	Predicted values
@@ -1181,7 +1174,7 @@ check = function(a) {
 #
 #	xv = c("log","season",12,"trend",1)
 
-forecast = function(x,xv,a,h=10,opt=2) {
+forecast = function(x,xv,a,h=10,opt=2,alpha=0.05) {
 
 	f = .forecast.transform(x,xv,a,h,1)
 
@@ -1191,8 +1184,9 @@ forecast = function(x,xv,a,h=10,opt=2) {
 		psi = ma.inf(list(phi=f$phi,theta=a$theta),h)
 		g = function(j) sum(psi[1:j]^2)
 		se = sqrt(a$sigma2 * sapply(1:h,g))
-		l = f$pred - 1.96*se
-		u = f$pred + 1.96*se
+		q = qnorm(1-alpha/2)*se
+		l = f$pred - q
+		u = f$pred + q
 		f = list(pred=f$pred,se=se,l=l,u=u)
 	}
 
@@ -1474,8 +1468,6 @@ forecast = function(x,xv,a,h=10,opt=2) {
 
 # Estimates AR model parameters using the Yule-Walker method
 #
-# This is a wrapper for ar.yw()
-#
 # Arguments
 #
 #	x	Data
@@ -1491,8 +1483,29 @@ forecast = function(x,xv,a,h=10,opt=2) {
 #	$sigma2	White noise variance
 #
 #	$aicc	Akaike information criterion corrected
+#
+#	$se.phi	Standard errors
 
 yw = function(x,p) {
+	n = length(x)
+	x = x - mean(x)
+	gamma = acvf(x,p)
+	Gamma = toeplitz(gamma[1:p])
+	phi = solve(Gamma,gamma[2:(p+1)])
+	v = gamma[1] - drop(crossprod(gamma[2:(p+1)],phi))
+	V = v * solve(Gamma)
+	se.phi = sqrt(1/n*diag(V))
+	a = list(phi=phi,
+		theta=0,
+		sigma2=NA,
+		aicc=NA,
+		se.phi=se.phi,
+		se.theta=0)
+	a = .innovation.update(x,a) # update sigma2, aicc
+	return(a)
+}
+
+.yw.orig = function(x,p) {
 	n = length(x)
 	x = x - mean(x)
 	a = ar.yw(x,aic=FALSE,order.max=p)

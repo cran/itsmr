@@ -1,6 +1,6 @@
-0bed6466baca1821e7307a6f657cb588 *DESCRIPTION
-21fb4f45e171b1e8cf3a01777b88d5b4 *NAMESPACE
-b95f2b5e40618c48fc901dc62daa01fd *R/itsmr.R
+e2492bfaf42f01af56df4b2ae5b9e542 *DESCRIPTION
+705648ffb64ea10ca6f568475c2f2de2 *NAMESPACE
+bd88696d28f28e06004792334684a5bd *R/itsmr.R
 99bc810503da06142326be65d55664b3 *man/Resid.Rd
 550a80060a537015ba152d7fe5d4c47d *man/Sunspots.Rd
 b12df30f1deb5df0f4b2f4d28f48c54a *man/aacvf.Rd
@@ -14,11 +14,11 @@ dcec74342f5e44e862842dd0ae46d9c9 *man/autofit.Rd
 60af33e3f04cb01ba79d247e96fe3481 *man/check.Rd
 d8eb91d36f181096443202615383da3f *man/deaths.Rd
 61ebc0cbe6de7dd51c81423c3403ea53 *man/dowj.Rd
-c37b036efb202b2b4657d524826ea7ad *man/forecast.Rd
+a261ddadf2573210b1b900815f5a38f1 *man/forecast.Rd
 7c032c388d1707b50685dd82ba13e4a4 *man/hannan.Rd
 2756f86a4eff51ace54743d07a7a5264 *man/hr.Rd
 10e6401c15dc977f21e11ef800eeb765 *man/ia.Rd
-efa5a95bf831ae78a3e4acf46cb0fe40 *man/itsmr-package.Rd
+7ab9beabefded3d8eb115bbdf219ee44 *man/itsmr-package.Rd
 d5747e9ee4bfea9897752fbed21507bf *man/lake.Rd
 0464bb6b2810a6c2b73370363a501c6c *man/ma.inf.Rd
 0a87c39056d01b205c6040d797c32276 *man/periodogram.Rd

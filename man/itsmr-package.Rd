@@ -20,8 +20,8 @@ by Peter J. Brockwell and Richard A. Davis.
 \tabular{ll}{
 Package: \tab itsmr\cr
 Type: \tab Package\cr
-Version: \tab 1.6\cr
-Date: \tab 2017-10-28\cr
+Version: \tab 1.7\cr
+Date: \tab 2017-11-03\cr
 License: \tab FreeBSD\cr
 LazyLoad: \tab yes\cr
 URL: \tab \url{http://eigenmath.xyz/itsmr-refman.pdf}\cr
