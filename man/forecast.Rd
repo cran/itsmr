@@ -11,12 +11,12 @@ Forecast future values
 }
 
 \usage{
-forecast(x, xv, a, h = 10, opt = 2, alpha = 0.05)
+forecast(x, M, a, h = 10, opt = 2, alpha = 0.05)
 }
 
 \arguments{
-\item{x}{Data vector}
-\item{xv}{Transform vector}
+\item{x}{Time series data}
+\item{M}{Data model}
 \item{a}{ARMA model}
 \item{h}{Steps ahead}
 \item{opt}{Display option (0 silent, 1 tabulate, 2 plot and tabulate)}
@@ -24,19 +24,18 @@ forecast(x, xv, a, h = 10, opt = 2, alpha = 0.05)
 }
 
 \details{
-The transform vector can be \code{NULL} for none.
-Otherwise \code{xv} is a vector that specifies a sequence of
-transform functions.
+The data model can be \code{NULL} for none.
+Otherwise \code{M} is a vector of function names and arguments.
 
 Example:
 
-\code{xv = c("log","season",12,"trend",1)}
+\code{M = c("log","season",12,"trend",1)}
 
-The above tansform vector
+The above model
 takes the log of the data, then subtracts a seasonal component
 of period 12, then subtracts a linear trend component.
 
-There are five functions from which to choose.
+These are the available functions:
 \tabular{ll}{
 \code{diff}\tab
 Difference the data. Has a single argument, the lag.
@@ -58,18 +57,17 @@ Has a single argument, the order of the trend
 (1 linear, 2 quadratic, etc.)
 }
 
-At the end of the transform vector there is an implied subtraction of
-the mean operation.
+At the end of the model there is an implicit subtraction of the mean operation.
 Hence the resulting time series always has zero mean.
 
-All of the transformations are inverted before the forecast
+All of the functions are inverted before the forecast
 results are displayed.
 }
 
 \value{
 Returns the following list invisibly.
 \item{pred}{Predicted values}
-\item{se}{Standard errors (not included if there is a log transform)}
+\item{se}{Standard errors (not returned for data models with log)}
 \item{l}{Lower bounds (95\% confidence interval)}
 \item{u}{Upper bounds}
 }
@@ -81,8 +79,8 @@ Returns the following list invisibly.
 }
 
 \examples{
-xv = c("log","season",12,"trend",1)
-e = Resid(wine,xv)
+M = c("log","season",12,"trend",1)
+e = Resid(wine,M)
 a = arma(e,1,1)
-forecast(wine,xv,a)
+forecast(wine,M,a)
 }

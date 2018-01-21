@@ -11,29 +11,28 @@ Compute residuals
 }
 
 \usage{
-Resid(x, xv = NULL, a = NULL)
+Resid(x, M = NULL, a = NULL)
 }
 
 \arguments{
-\item{x}{Data vector}
-\item{xv}{Transform vector}
+\item{x}{Time series data}
+\item{M}{Data model}
 \item{a}{ARMA model}
 }
 
 \details{
-The transform vector can be \code{NULL} for none.
-Otherwise \code{xv} is a vector that specifies a sequence of
-transform functions.
+The data model can be \code{NULL} for none.
+Otherwise \code{M} is a vector of function names and arguments.
 
 Example:
 
-\code{xv = c("log","season",12,"trend",1)}
+\code{M = c("log","season",12,"trend",1)}
 
-The above tansform vector
+The above model
 takes the log of the data, then subtracts a seasonal component
 of period 12, then subtracts a linear trend component.
 
-There are five functions from which to choose.
+These are the available functions:
 \tabular{ll}{
 \code{diff}\tab
 Difference the data. Has a single argument, the lag.
@@ -55,8 +54,7 @@ Has a single argument, the order of the trend
 (1 linear, 2 quadratic, etc.)
 }
 
-At the end of the transform vector there is an implied subtraction of
-the mean operation.
+At the end of the model there is an implicit subtraction of the mean operation.
 Hence the resulting time series always has zero mean.
 }
 
@@ -69,9 +67,9 @@ Returns a vector of residuals the same length as \code{x}.
 }
 
 \examples{
-xv = c("log","season",12,"trend",1)
-e = Resid(wine,xv)
+M = c("log","season",12,"trend",1)
+e = Resid(wine,M)
 
 a = arma(e,1,1)
-ee = Resid(wine,xv,a)
+ee = Resid(wine,M,a)
 }

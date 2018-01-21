@@ -15,7 +15,7 @@ season(x, d)
 }
 
 \arguments{
-\item{x}{Data vector}
+\item{x}{Time series data}
 \item{d}{Number of observations per season}
 }
 

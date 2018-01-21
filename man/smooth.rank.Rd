@@ -15,7 +15,7 @@ smooth.rank(x, k)
 }
 
 \arguments{
-\item{x}{Data vector}
+\item{x}{Time series data}
 \item{k}{Number of frequencies}
 }
 

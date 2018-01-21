@@ -15,7 +15,7 @@ acvf(x, h = 40)
 }
 
 \arguments{
-\item{x}{Data vector}
+\item{x}{Time series data}
 \item{h}{Maximum lag}
 }
 

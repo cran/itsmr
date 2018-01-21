@@ -15,7 +15,7 @@ hannan(x, p, q)
 }
 
 \arguments{
-\item{x}{Data vector (typically residuals from \code{Resid})}
+\item{x}{Time series data (typically residuals from \code{Resid})}
 \item{p}{AR order}
 \item{q}{MA order (\code{q > 0})}
 }
@@ -42,8 +42,8 @@ Returns an ARMA model consisting of a list with the following components.
 }
 
 \examples{
-xv = c("diff",12)
-e = Resid(deaths,xv)
+M = c("diff",12)
+e = Resid(deaths,M)
 a = hannan(e,1,1)
 print(a)
 }

@@ -15,7 +15,7 @@ arar(y, h = 10, opt = 2)
 }
 
 \arguments{
-\item{y}{Data vector}
+\item{y}{Time series data}
 \item{h}{Steps ahead}
 \item{opt}{Display option (0 silent, 1 tabulate, 2 plot and tabulate)}
 }

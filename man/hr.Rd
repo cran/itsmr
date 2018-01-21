@@ -15,7 +15,7 @@ hr(x, d)
 }
 
 \arguments{
-\item{x}{Data vector}
+\item{x}{Time series data}
 \item{d}{Vector of harmonic periods}
 }
 

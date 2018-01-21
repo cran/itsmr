@@ -15,7 +15,7 @@ trend(x, p)
 }
 
 \arguments{
-\item{x}{Data vector}
+\item{x}{Time series data}
 \item{p}{Polynomial order (1 linear, 2 quadratic, etc.)}
 }
 

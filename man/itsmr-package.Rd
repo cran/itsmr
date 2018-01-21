@@ -20,17 +20,17 @@ by Peter J. Brockwell and Richard A. Davis.
 \tabular{ll}{
 Package: \tab itsmr\cr
 Type: \tab Package\cr
-Version: \tab 1.7\cr
-Date: \tab 2017-11-03\cr
+Version: \tab 1.8\cr
+Date: \tab 2018-01-20\cr
 License: \tab FreeBSD\cr
 LazyLoad: \tab yes\cr
-URL: \tab \url{http://eigenmath.xyz/itsmr-refman.pdf}\cr
+URL: \tab \url{http://eigenmath.org/itsmr-refman.pdf}\cr
 }
 }
 
 \author{
 George Weigt\cr
-Maintainer: George Weigt <g808391@gmail.com>
+Maintainer: George Weigt <g808391@icloud.com>
 }
 
 \references{
@@ -44,20 +44,20 @@ Brockwell, Peter J., and Richard A. Davis.
 \examples{
 plotc(wine)
 
-## Define a suitable transformation of the data
-xv = c("log","season",12,"trend",1)
+## Define a suitable data model
+M = c("log","season",12,"trend",1)
 
 ## Obtain residuals and check for stationarity
-e = Resid(wine,xv)
+e = Resid(wine,M)
 test(e)
 
 ## Define a suitable ARMA model
 a = arma(e,p=1,q=1)
 
 ## Obtain residuals and check for white noise
-ee = Resid(wine,xv,a)
+ee = Resid(wine,M,a)
 test(ee)
 
 ## Forecast future values
-forecast(wine,xv,a)
+forecast(wine,M,a)
 }

@@ -15,7 +15,7 @@ autofit(x, p = 0:5, q = 0:5)
 }
 
 \arguments{
-\item{x}{Data vector (typically residuals from \code{Resid})}
+\item{x}{Time series data (typically residuals from \code{Resid})}
 \item{p}{Range of AR orders}
 \item{q}{Range of MA orders}
 }
@@ -43,8 +43,8 @@ Returns an ARMA model consisting of a list with the following components.
 }
 
 \examples{
-xv = c("diff",1)
-e = Resid(dowj,xv)
+M = c("diff",1)
+e = Resid(dowj,M)
 a = autofit(e)
 print(a)
 }

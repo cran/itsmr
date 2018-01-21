@@ -1,4 +1,4 @@
-# This is ITSM-R version 1.7
+# This is ITSM-R version 1.8
 
 selftest = function() {
 	.test.smooth.ma()
@@ -214,7 +214,7 @@ aacvf = function(a,h) {
 #
 # Arguments
 #
-#	x	Data
+#	x	Time series data
 #
 #	h	Maximum lag
 #
@@ -304,7 +304,7 @@ plotc = function(y1,y2=NULL) {
 #
 # Arguments
 #
-#	x	Data
+#	x	Time series data
 #
 #	p	Polynomial order (1 linear, 2 quadratic, etc.)
 
@@ -322,7 +322,7 @@ trend = function(x,p) {
 #
 # Arguments
 #
-#	x	Data
+#	x	Time series data
 #
 #	q	Window size is 2q + 1
 #
@@ -342,7 +342,7 @@ smooth.ma = function(x,q) {
 .test.smooth.ma = function() {
 	cat("smooth.ma ")
 	d = smooth.ma(strikes,2) - c(
-     4883.800000000000000, #Data from B&D ITSM using File->Export
+     4883.800000000000000, #Data from ITSM 2000 using File->Export
      4630.000000000000000,
      4546.600000000000000,
      4364.200000000001000,
@@ -381,7 +381,7 @@ smooth.ma = function(x,q) {
 #
 # Arguments
 #
-#	x	Data
+#	x	Time series data
 #
 #	alpha	Smoothing parameter 0-1
 #
@@ -401,7 +401,7 @@ smooth.exp = function(x,alpha) {
 .test.smooth.exp = function() {
 	cat("smooth.exp ")
 	d = smooth.exp(strikes,0.4) - c(
-     4737.000000000000000, #Data from B&D ITSM using File->Export
+     4737.000000000000000, #Data from ITSM 2000 using File->Export
      4889.000000000000000,
      4969.800000000000000,
      4369.080000000000000,
@@ -440,7 +440,7 @@ smooth.exp = function(x,alpha) {
 #
 # Arguments
 #
-#	x	Data
+#	x	Time series data
 #
 #	f	Fraction of spectrum to pass 0-1
 #
@@ -515,7 +515,7 @@ smooth.fft = function(x,f) {
 #
 # Arguments
 #
-#	x	Data
+#	x	Time series data
 #
 #	d	Number of observations per season
 
@@ -553,7 +553,7 @@ smooth.rank = function(x,k) {
 #
 # Arguments
 #
-#	x	Data
+#	x	Time series data
 #
 #	d	Vector of cycle periods
 
@@ -792,7 +792,7 @@ plota = function(u,v=NULL,h=40) {
 #
 # Argument
 #
-#	u	Data or ARMA model (list of $phi, $theta)
+#	u	Time series data or ARMA model (list of $phi, $theta)
 
 plots = function(u) {
 
@@ -863,7 +863,7 @@ sim = function(a,n=100) {
 #
 # Arguments
 #
-#	x	Data
+#	x	Time series data
 #
 #	q	MA order
 #
@@ -959,7 +959,7 @@ ia = function(x,q,m=17) {
 #
 # Arguments
 #
-#	x	Data
+#	x	Time series data
 #
 #	p	AR order
 #
@@ -975,8 +975,8 @@ hannan = function(x,p,q) {
 	n = length(x)
 	x = x - mean(x)
 
-	m = 20 + p + q #Reverse engineered from B&D ITSM
-	k = max(p,q)   #Reverse engineered from B&D ITSM
+	m = 20 + p + q #Reverse engineered from ITSM 2000
+	k = max(p,q)   #Reverse engineered from ITSM 2000
 
 	# Fit an AR(m)
 
@@ -1044,7 +1044,7 @@ hannan = function(x,p,q) {
 #
 # Arguments
 #
-#	x	Data
+#	x	Time series data
 #
 #	p	AR order
 #
@@ -1101,7 +1101,7 @@ arma = function(x,p=0,q=0) {
 #
 # Arguments
 #
-#	x	Data
+#	x	Time series data
 #
 #	p	AR order sequence
 #
@@ -1141,9 +1141,9 @@ check = function(a) {
 #
 # Arguments
 #
-#	x	Observed data
+#	x	Time series data
 #
-#	xv	Transform vector (NULL for none)
+#	M	Data model (NULL for none)
 #
 #	a	ARMA model (list of $phi, $theta, $sigma2)
 #
@@ -1157,13 +1157,13 @@ check = function(a) {
 #
 #	$pred	Predicted values
 #
-#	$se	Standard errors (not included if log transform in xv)
+#	$se	Standard errors (not included if log function in M)
 #
 #	$l	Lower 95% prediction bound
 #
 #	$u	Upper 95% prediction bound
 #
-# The transform vector xv is a vector of strings that specify a sequence of
+# The data model M is a vector of strings that specify a sequence of
 # data transform functions.
 #
 # The transforms are applied left to right. Following this, the ARMA forecast
@@ -1172,11 +1172,11 @@ check = function(a) {
 # For example, the following transform takes the log of the data, then
 # removes seasonality of period 12, then removes linear trend:
 #
-#	xv = c("log","season",12,"trend",1)
+#	M = c("log","season",12,"trend",1)
 
-forecast = function(x,xv,a,h=10,opt=2,alpha=0.05) {
+forecast = function(x,M,a,h=10,opt=2,alpha=0.05) {
 
-	f = .forecast.transform(x,xv,a,h,1)
+	f = .forecast.transform(x,M,a,h,1)
 
 	# Compute standard errors per (3.3.19) of ITSF
 
@@ -1214,27 +1214,27 @@ forecast = function(x,xv,a,h=10,opt=2,alpha=0.05) {
 
 # Transform the data, forecast, then invert the transform
 
-.forecast.transform = function(x,xv,a,h,k) {
+.forecast.transform = function(x,M,a,h,k) {
 
-	if (k > length(xv))
+	if (k > length(M))
 		return(.forecast.arma(x,a,h))
 
-	if (xv[k] == "diff")
-		return(.forecast.diff(x,xv,a,h,k))
+	if (M[k] == "diff")
+		return(.forecast.diff(x,M,a,h,k))
 
-	if (xv[k] == "hr")
-		return(.forecast.hr(x,xv,a,h,k))
+	if (M[k] == "hr")
+		return(.forecast.hr(x,M,a,h,k))
 
-	if (xv[k] == "log")
-		return(.forecast.log(x,xv,a,h,k))
+	if (M[k] == "log")
+		return(.forecast.log(x,M,a,h,k))
 
-	if (xv[k] == "season")
-		return(.forecast.season(x,xv,a,h,k))
+	if (M[k] == "season")
+		return(.forecast.season(x,M,a,h,k))
 
-	if (xv[k] == "trend")
-		return(.forecast.trend(x,xv,a,h,k))
+	if (M[k] == "trend")
+		return(.forecast.trend(x,M,a,h,k))
 
-	stop(xv[k])
+	stop(M[k])
 }
 
 .forecast.arma = function(x,a,h) {
@@ -1269,14 +1269,14 @@ forecast = function(x,xv,a,h=10,opt=2,alpha=0.05) {
 
 # Difference the data, forecast, diffinv
 
-.forecast.diff = function(x,xv,a,h,k) {
+.forecast.diff = function(x,M,a,h,k) {
 
 	n = length(x)
 
-	lag = as.numeric(xv[k+1])
+	lag = as.numeric(M[k+1])
 
 	y = diff(x,lag,1)
-	f = .forecast.transform(y,xv,a,h,k+2)
+	f = .forecast.transform(y,M,a,h,k+2)
 	pred = diffinv(f$pred,lag,1,x[(n-lag+1):n])
 	pred = pred[(lag+1):(lag+h)]
 
@@ -1297,7 +1297,7 @@ forecast = function(x,xv,a,h=10,opt=2,alpha=0.05) {
 
 # Subtract harmonic components, forecast, add them back
 
-.forecast.hr = function(x,xv,a,h,k) {
+.forecast.hr = function(x,M,a,h,k) {
 
 	n = length(x)
 
@@ -1307,10 +1307,10 @@ forecast = function(x,xv,a,h=10,opt=2,alpha=0.05) {
 	X = rep(1,n+h)
 	w = 0:(n-1+h)
 	k = k+1
-	while (k <= length(xv)) {
-		if (regexpr("[^0-9]",xv[k]) > -1)
+	while (k <= length(M)) {
+		if (regexpr("[^0-9]",M[k]) > -1)
 			break
-		d = as.numeric(xv[k])
+		d = as.numeric(M[k])
 		X = cbind(X,cos(2*pi*w/d),sin(2*pi*w/d))
 		k = k+1
 	}
@@ -1329,7 +1329,7 @@ forecast = function(x,xv,a,h=10,opt=2,alpha=0.05) {
 
 	# Forecast
 
-	f = .forecast.transform(y,xv,a,h,k)
+	f = .forecast.transform(y,M,a,h,k)
 
 	# Restore the harmonic component
 
@@ -1345,9 +1345,9 @@ forecast = function(x,xv,a,h=10,opt=2,alpha=0.05) {
 
 # Log, forecast, exponentiate
 
-.forecast.log = function(x,xv,a,h,k) {
+.forecast.log = function(x,M,a,h,k) {
 
-	f = .forecast.transform(log(x),xv,a,h,k+1)
+	f = .forecast.transform(log(x),M,a,h,k+1)
 
 	# Prediction bounds
 
@@ -1371,13 +1371,13 @@ forecast = function(x,xv,a,h=10,opt=2,alpha=0.05) {
 
 # Subtract seasonal component, forecast, add it back
 
-.forecast.season = function(x,xv,a,h,k) {
+.forecast.season = function(x,M,a,h,k) {
 
 	n = length(x)
 
 	# d is the number of observations per season
 
-	d = as.numeric(xv[k+1])
+	d = as.numeric(M[k+1])
 
 	# m is the estimated trend (ITSF p. 31)
 
@@ -1408,7 +1408,7 @@ forecast = function(x,xv,a,h=10,opt=2,alpha=0.05) {
 
 	# Forecast
 
-	f = .forecast.transform(y,xv,a,h,k+2)
+	f = .forecast.transform(y,M,a,h,k+2)
 
 	# Restore the seasonal component
 
@@ -1424,13 +1424,13 @@ forecast = function(x,xv,a,h=10,opt=2,alpha=0.05) {
 
 # Subtract trend component, forecast, add it back
 
-.forecast.trend = function(x,xv,a,h,k) {
+.forecast.trend = function(x,M,a,h,k) {
 
 	n = length(x)
 
 	# p is the order of the trend (1 linear, 2 quadratic, etc.)
 
-	p = as.numeric(xv[k+1])
+	p = as.numeric(M[k+1])
 
 	# Build the design matrix X
 
@@ -1452,7 +1452,7 @@ forecast = function(x,xv,a,h=10,opt=2,alpha=0.05) {
 
 	# Forecast
 
-	f = .forecast.transform(y,xv,a,h,k+2)
+	f = .forecast.transform(y,M,a,h,k+2)
 
 	# Restore the trend component
 
@@ -1470,7 +1470,7 @@ forecast = function(x,xv,a,h=10,opt=2,alpha=0.05) {
 #
 # Arguments
 #
-#	x	Data
+#	x	Time series data
 #
 #	p	AR order
 #
@@ -1524,7 +1524,7 @@ yw = function(x,p) {
 #
 # Arguments
 #
-#	x	Data
+#	x	Time series data
 #
 #	p	AR order
 #
@@ -1560,43 +1560,43 @@ burg = function(x,p) {
 #
 # Arguments
 #
-#	x	Data
+#	x	Time series data
 #
-#	xv	Transform vector (NULL for none)
+#	M	Data model (NULL for none)
 #
 #	a	ARMA model (list of $phi, $theta or NULL for none)
 
-Resid = function(x,xv=NULL,a=NULL) {
+Resid = function(x,M=NULL,a=NULL) {
 	y = x
 	k = 1
-	while (k < length(xv)) {
-		if (xv[k] == "diff") {
-			lag = as.numeric(xv[k+1])
+	while (k < length(M)) {
+		if (M[k] == "diff") {
+			lag = as.numeric(M[k+1])
 			y = diff(y,lag,1)
 			k = k+2
-		} else if (xv[k] == "hr") {
+		} else if (M[k] == "hr") {
 			d = NULL
 			k = k+1
-			while (k <= length(xv)) {
-				if (regexpr("[^0-9]",xv[k]) > -1)
+			while (k <= length(M)) {
+				if (regexpr("[^0-9]",M[k]) > -1)
 					break
-				d = c(d,as.numeric(xv[k]))
+				d = c(d,as.numeric(M[k]))
 				k = k+1
 			}
 			y = y - hr(x,d)
-		} else if (xv[k] == "log") {
+		} else if (M[k] == "log") {
 			y = log(y)
 			k = k+1
-		} else if (xv[k] == "season") {
-			d = as.numeric(xv[k+1])
+		} else if (M[k] == "season") {
+			d = as.numeric(M[k+1])
 			y = y - season(y,d)
 			k = k+2
-		} else if (xv[k] == "trend") {
-			p = as.numeric(xv[k+1])
+		} else if (M[k] == "trend") {
+			p = as.numeric(M[k+1])
 			y = y - trend(y,p)
 			k = k+2
 		} else
-			stop(xv[k])
+			stop(M[k])
 	}
 	y = y - mean(y)
 	if (!is.null(a)) {
@@ -1743,7 +1743,7 @@ test = function(e) {
 #
 # Arguments
 #
-#	x	Data with mean subtracted off
+#	x	Time series data with mean subtracted off
 #
 #	a	ARMA model (list of $phi, $theta, $sigma2)
 
@@ -1756,7 +1756,7 @@ test = function(e) {
 #
 # Arguments
 #
-#	x	Data with mean subtracted off
+#	x	Time series data with mean subtracted off
 #
 #	a	ARMA model (list of $phi, $theta, $sigma2)
 #
@@ -1834,7 +1834,7 @@ test = function(e) {
 #
 # Arguments
 #
-#	x	Data with mean subtracted off
+#	x	Times series data with mean subtracted off
 #
 #	a	ARMA model (list of $phi, $theta)
 #
@@ -1875,7 +1875,7 @@ test = function(e) {
 #
 # Arguments
 #
-#	y	Data
+#	y	Time series data
 #
 #	h	Number of steps ahead
 #
@@ -2051,7 +2051,7 @@ arar = function(y,h=10,opt=2) {
 	cat("ok\n")
 }
 
-# For arar, ITSM-R sigma2 is different from B&D ITSM so divide by sigma2 to compare.
+# For arar, ITSM-R sigma2 is different from ITSM 2000 so divide by sigma2 to compare.
 
 .test.arar.kernel = function(f,pred,se,l,u,eps) {
 	e = (f$pred - pred) / pred
@@ -2090,10 +2090,10 @@ arar = function(y,h=10,opt=2) {
 
 .test.forecast.lake = function() {
 	cat("test forecast (lake) ")
-	xv = c("diff",1)
-	e = Resid(lake,xv)
+	M = c("diff",1)
+	e = Resid(lake,M)
 	a = arma(e,0,0)
-	f = forecast(lake,xv,a,opt=0)
+	f = forecast(lake,M,a,opt=0)
 	pred = c(9.95567,9.95134,9.94701,9.94268,9.93835,9.93402,9.92969,9.92536,9.92103,9.9167)
 	se = c(0.74518,1.05384,1.29069,1.49036,1.66627,1.82531,1.97156,2.10768,2.23554,2.35646)
 	l = c(8.49515,7.88585,7.41731,7.02163,6.67252,6.35648,6.06551,5.79438,5.53946,5.29812)
@@ -2104,10 +2104,10 @@ arar = function(y,h=10,opt=2) {
 
 .test.forecast.dowj = function() {
 	cat("test forecast (dowj) ")
-	xv = c("diff",1)
-	e = Resid(dowj,xv)
+	M = c("diff",1)
+	e = Resid(dowj,M)
 	a = arma(e,1,0)
-	f = forecast(dowj,xv,a,opt=0)
+	f = forecast(dowj,M,a,opt=0)
 	pred = c(120.96,120.91,120.97,121.06,121.18,121.31,121.44,121.57,121.7,121.84)
 	se = c(0.38146,0.67099,0.91921,1.13299,1.32016,1.48703,1.63825,1.77718,1.90622,2.02716)
 	l = c(120.21,119.6,119.16,118.84,118.59,118.39,118.23,118.09,117.97,117.86)
@@ -2118,10 +2118,10 @@ arar = function(y,h=10,opt=2) {
 
 .test.forecast.wine = function() {
 	cat("test forecast (wine) ")
-	xv = c("log","diff",12)
-	e = Resid(wine,xv)
+	M = c("log","diff",12)
+	e = Resid(wine,M)
 	a = arma(e,1,0)
-	f = forecast(wine,xv,a,opt=0)
+	f = forecast(wine,M,a,opt=0)
 	pred = c(2323.8,2456.5,1079.4,1783.2,1758,1632.6,1967.6,2025.4,3125.9,2753.4)
 	l = c(1780.9,1853.9,813.19,1343.1,1324.1,1229.7,1482,1525.5,2354.4,2073.8)
 	u = c(3032.3,3254.9,1432.8,2367.5,2334.1,2167.6,2612.4,2689.1,4150.2,3655.6)
@@ -2131,10 +2131,10 @@ arar = function(y,h=10,opt=2) {
 
 .test.forecast.deaths = function() {
 	cat("test forecast (deaths) ")
-	xv = c("diff",12)
-	e = Resid(deaths,xv)
+	M = c("diff",12)
+	e = Resid(deaths,M)
 	a = arma(e,1,1)
-	f = forecast(deaths,xv,a,opt=0)
+	f = forecast(deaths,M,a,opt=0)
 	pred = c(8175.4,7193.9,8058.2,8364,9320.2,9611.6,10636,9955.2,9216.3,9155.9)
 	se = c(351.83,394.64,428,454.69,476.41,494.3,509.16,521.57,532,540.8)
 	l = c(7485.8,6420.4,7219.3,7472.8,8386.4,8642.7,9638,8933,8173.6,8096)
@@ -2196,7 +2196,7 @@ arar = function(y,h=10,opt=2) {
 #
 # Argument
 #
-#	x	Data
+#	x	Time series data
 #
 #	q	Moving average filter order (can be a vector)
 #

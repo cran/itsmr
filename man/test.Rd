@@ -15,7 +15,7 @@ test(e)
 }
 
 \arguments{
-\item{e}{Data vector (typically residuals from \code{Resid})}
+\item{e}{Time series data (typically residuals from \code{Resid})}
 }
 
 \details{
@@ -35,10 +35,10 @@ None
 }
 
 \examples{
-xv = c("log","season",12,"trend",1)
-e = Resid(wine,xv)
+M = c("log","season",12,"trend",1)
+e = Resid(wine,M)
 test(e) ## Is e stationary?
 a = arma(e,1,1)
-ee = Resid(wine,xv,a)
+ee = Resid(wine,M,a)
 test(ee) ## Is ee white noise?
 }

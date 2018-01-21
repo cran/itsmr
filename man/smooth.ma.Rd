@@ -15,7 +15,7 @@ smooth.ma(x, q)
 }
 
 \arguments{
-\item{x}{Data vector}
+\item{x}{Time series data}
 \item{q}{Filter order}
 }
 

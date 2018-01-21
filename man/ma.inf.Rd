@@ -42,8 +42,8 @@ Returns a vector of length \code{n+1} to accomodate coefficient 0 at index 1.
 }
 
 \examples{
-xv = c("diff",12)
-e = Resid(deaths,xv)
+M = c("diff",12)
+e = Resid(deaths,M)
 a = arma(e,1,1)
 ma.inf(a,10)
 }

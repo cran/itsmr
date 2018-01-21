@@ -15,7 +15,7 @@ arma(x, p = 0, q = 0)
 }
 
 \arguments{
-\item{x}{Data vector}
+\item{x}{Time series data}
 \item{p}{AR order}
 \item{q}{MA order}
 }
@@ -44,8 +44,8 @@ Returns an ARMA model consisting of a list with the following components.
 }
 
 \examples{
-xv = c("diff",1)
-e = Resid(dowj,xv)
+M = c("diff",1)
+e = Resid(dowj,M)
 a = arma(e,1,0)
 print(a)
 }

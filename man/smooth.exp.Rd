@@ -15,7 +15,7 @@ smooth.exp(x, alpha)
 }
 
 \arguments{
-\item{x}{Data vector}
+\item{x}{Time series data}
 \item{alpha}{Smoothness setting, 0-1}
 }
 

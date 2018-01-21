@@ -15,7 +15,7 @@ periodogram(x, q = 0, opt = 2)
 }
 
 \arguments{
-\item{x}{Data vector}
+\item{x}{Time series data}
 \item{q}{MA filter order}
 \item{opt}{Plot option (0 silent, 1 periodogram only, 2 periodogram and filter)}
 }

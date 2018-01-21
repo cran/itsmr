@@ -15,7 +15,7 @@ smooth.fft(x, f)
 }
 
 \arguments{
-\item{x}{Data vector}
+\item{x}{Time series data}
 \item{f}{Cut-off frequency, 0-1}
 }
 

@@ -15,7 +15,7 @@ ia(x, q, m = 17)
 }
 
 \arguments{
-\item{x}{Data vector (typically residuals from \code{Resid})}
+\item{x}{Time series data (typically residuals from \code{Resid})}
 \item{q}{MA order}
 \item{m}{Recursion level}
 }
@@ -43,8 +43,8 @@ Returns an ARMA model consisting of a list with the following components.
 }
 
 \examples{
-xv = c("diff",1)
-e = Resid(dowj,xv)
+M = c("diff",1)
+e = Resid(dowj,M)
 a = ia(e,1)
 print(a)
 }
