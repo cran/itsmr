@@ -1,4 +1,4 @@
-# This is ITSM-R version 1.8
+# This is ITSM-R version 1.9
 
 selftest = function() {
 	.test.smooth.ma()
@@ -1550,7 +1550,7 @@ burg = function(x,p) {
 		theta=0,
 		sigma2=NA,
 		aicc=NA,
-		se.phi=diag(a$asy.var.coef),
+		se.phi=sqrt(diag(a$asy.var.coef)),
 		se.theta=0)
 	a = .innovation.update(x,a)
 	return(a)
